@@ -11,6 +11,7 @@ For the “bones” of the choropleth, we need a GeoJSON containing the coordina
 
 # Transform to GeoJSON and Combine:
 Combine all the zipped .shp into one GeoJSON. They need to be unzipped into the same folder.
+
 '''
 import os
 import geopandas as gpd
