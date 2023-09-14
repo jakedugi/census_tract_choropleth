@@ -10,6 +10,7 @@ For the “bones” of the choropleth, we need a GeoJSON containing the coordina
 
 # Transform to GeoJSON and Combine:
 Combine all the zipped .shp into one GeoJSON. They need to be unzipped into the same folder.
+
 ```
 import os
 import geopandas as gpd
@@ -45,18 +46,19 @@ output_file_path = convert_to_geojson(directory_path, output_file_path)
 print("Output GeoJSON file:", output_file_path)
 ```
 
-Simplify:
+# Simplify:
 The main reason why highly granular choropleths are not used is because of their size. A simplified census tract level choropleth will be 2+ GBs making them impossible to render. Simplification techniques make highly granular choropleths possible. With simplification census tract level choropleths of the U.S. can become as small as 100 MBs.
 
 Douglas-Peuker is a popular method used for geometry simplification however I found it turns small geometries into triangles too quickly. We will use Visvalingam / weighted area. It works by iteratively removing the least important points based on a weighted average of their triangle areas, resulting in a simplified but visually similar representation of the original path. It is helpful to visually assess the degree of simplification to not overdo it. I opt for https://mapshaper.org/ it allows you to assess the degree of simplification in real-time.
 
 In mapshaper select the combined GeoJSON file, select detect line intersections, import, select simplify, select, select prevent shape removal, Visvalingam / weighted area, and apply. Zoom into a metro area like Dallas, setting slider should be set to 5%-3%, repair line intersections created by the simplification process, export, name as simplified version, file format GeoJSON, and export. The simplified GeoJSON has been decreased from 1.4GB to 85MB. This is our final GeoJSON. tracts1.geojson is now blog_tracts_zip.json for this example.
 
-Data:
+# Data:
 For the “meat” of the choropleth, we need a pandas data frame containing the census tract-level data we wish to visualize. Data sources easily linkable to census tracts could be data present in the GeoJSON under properties, Census data, American Community Survey data, and you can use the census tract centroid INTPTLAT, INTPTLON to produce straight-line distances for estimated travel times (see future Stroke Center Accessibility). For this, we will link American Community Survey data. Go to https://data.census.gov/advanced, Select Geography, Census Tract, Select State or all States, View Filters, Topics find a topic, for this tutorial income and poverty, income and earnings, Income (Households, Families, Individuals), View Filters, Search, we will use S2701: SELECTED CHARACTERISTICS OF HEALTH INSURANCE COVERAGE IN THE UNITED STATES, download table, select latest year, download .csv.
 
-Unzip, look at Column Metadata choose columns of data to use, estimate rows are the totals the rest are comments, and input the names of the rows to keep. Need to keep GEO_ID for linking but change the format. Removing the second row that has names in it. '''
+Unzip, look at Column Metadata choose columns of data to use, estimate rows are the totals the rest are comments, and input the names of the rows to keep. Need to keep GEO_ID for linking but change the format. Removing the second row that has names in it. 
 
+```
 import pandas as pd
 
 def process_csv(input_file, output_file, columns_to_keep):
@@ -84,17 +86,17 @@ output_file = r'D:\code\tract\censustractdata\Blog_Data.csv'
 columns_to_keep = ['GEO_ID','S2701_C01_001E']
 
 process_csv(input_file, output_file, columns_to_keep)
-S2701_C01_001E : Estimate!!Total!! population.
+```
 
-'''
+S2701_C01_001E : Estimate!!Total!! population.
 Here are some other columns you could play with. S2701_C01_004E : Estimate!!Total!!AGE!!19 to 25 years, 6S2701_C01_005E : Estimate!!Total!!AGE!!26 to 34 years, S2701_C01_014E : Estimate!!Total!!SEX!!Male, S2701_C01_015E : Estimate!!Total!!SEX!!Female, S2701_C01_041E : Estimate!!Total!!Bachelor’s degree or higher, S2701_C01_056E : Estimate!!Total!!HOUSEHOLD INCOME!!$100,000 and over, S2701_C03_001E : Estimate!!Percent Insured!! population
 
-Analysis:
-We are going to analyze the column of data we wish to visualize to find out more about the distribution and percentiles. If skewed you can log transform the data see my future Stroke Center Accessibility! For this tutorial we use S2701_C01_001E : Estimate!!Total!! population. To see how far from the mean of 4,000 Pax that each census tract the census borough is shooting for. You need to remove the first 9 digits of the Geo_ID to match the GEOID in the JSON in this format “GEOID”:”01117030611" https://ask.census.gov/prweb/PRServletCustom/app/ECORRAsk2/YACFBFye-rFIz_FoGtyvDRUGg1Uzu5Mn*/!STANDARD?pzuiactionzzz=CXtpbn0rTEpMcGRYOG1vS0tqTFAwaENUZWpvM1NNWEMzZ3p5aFpnWUxzVmw0TjJoOEprcE5BQndaM1Vid1FKbWRibnZu*. '''
+# Analysis:
+We are going to analyze the column of data we wish to visualize to find out more about the distribution and percentiles. If skewed you can log transform the data see my future Stroke Center Accessibility! For this tutorial we use S2701_C01_001E : Estimate!!Total!! population. To see how far from the mean of 4,000 Pax that each census tract the census borough is shooting for. You need to remove the first 9 digits of the Geo_ID to match the GEOID in the JSON in this format “GEOID”:”01117030611" https://ask.census.gov/prweb/PRServletCustom/app/ECORRAsk2/YACFBFye-rFIz_FoGtyvDRUGg1Uzu5Mn*/!STANDARD?pzuiactionzzz=CXtpbn0rTEpMcGRYOG1vS0tqTFAwaENUZWpvM1NNWEMzZ3p5aFpnWUxzVmw0TjJoOEprcE5BQndaM1Vid1FKbWRibnZu*. 
 
+```
 import pandas as pd
 
-# Function to convert and save CSV
 def convert_and_save_csv(input_csv_file, output_csv_file, selected_columns, column_rename_mapping):
     # Load the CSV file without specifying data types
     df = pd.read_csv(input_csv_file)
@@ -179,19 +181,20 @@ print(data_types)
 
 print("\nMissing Values:")
 print(missing_values)
+```
 
-'''
 Summary Statistics: [0, 1931, 2493, 2943, 3355, 3754, 4170, 4648, 5244, 6114, 8600], 'ticktext': ['0%:0', '10%:1931', '20%:2493', '30%:2943', '40%:3355', '50%:3754', '60%:4170', '70%:4648', '80%:5244', '90%:6114', '99%:8600'],
 
 The largest population tracts are military bases which are outliers to the 4,000 population rule. We will use these to construct our choropleth legend.
 
-Choropleth:
+# Choropleth:
 For the base map, I like to use Mapbox choropleth. You need an API access token to access their light base map. https://account.mapbox.com/access-tokens/ create an account, create an access token, and add to a file (“D:/code/tract/codetract/accesstoken.txt”, “r”), ( mapbox_access_token = “pk.eyJ1IjoiamFrZWR1Z2kiLCJhIjoiY2xsZndndmFtMHUzdzNycnlwN3pwdWIxMCJ9.N33rh6ImGOt8Eqov3bWUzw”
 
 px.set_mapbox_access_token(mapbox_access_token)), (mapbox_style=”light”,). Most issues are because of data types. dtype={‘GEOID’:object,’GEO_ID’:object,’Total_Population’:int}). Make sure these are correct all nan values are filled. df = df[df[‘Total_Population’] > 0] so that it only shows polygons that have a pop greater than zero. Some irrelevant tracts with populations of 0 exist. locations and feature id keys need to be the same. locations=’GEOID’, featureidkey=”properties.GEOID”, This is what links the data to the polygons. labels rounded to the nearest int you can change accordingly. Here is more info on the parameters https://plotly.github.io/plotly.py-docs/generated/plotly.express.choropleth_mapbox.html;. This code is for the legend ‘tickvals’: [0, 1931, 2493, 2943, 3355, 3754, 4170, 4648, 5244, 6114, 8600],
 ‘ticktext’: [‘0%:0’, ‘10%:1931’, ‘20%:2493’, ‘30%:2943’, ‘40%:3355’, ‘50%:3754’, ‘60%:4170’, ‘70%:4648’, ‘80%:5244’, ‘90%:6114’, ‘99%:8600’],
-‘orientation’: ‘h’,. This saves as an html file open in any browser. '''
+‘orientation’: ‘h’,. This saves as an html file open in any browser.
 
+```
 import pandas as pd
 import json
 import plotly.express as px
@@ -282,3 +285,4 @@ def catestvisual():
 
 if __name__ == '__main__':
     catestvisual()
+```
