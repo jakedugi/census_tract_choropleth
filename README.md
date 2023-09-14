@@ -10,8 +10,7 @@ For the “bones” of the choropleth, we need a GeoJSON containing the coordina
 
 # Transform to GeoJSON and Combine:
 Combine all the zipped .shp into one GeoJSON. They need to be unzipped into the same folder.
-
-'''
+```
 import os
 import geopandas as gpd
 import pandas as pd
@@ -44,9 +43,8 @@ output_file_path = 'D:/code/tract/json/tracts1.geojson'
 output_file_path = convert_to_geojson(directory_path, output_file_path)
 
 print("Output GeoJSON file:", output_file_path)
-'''
+```
 
-'''
 Simplify:
 The main reason why highly granular choropleths are not used is because of their size. A simplified census tract level choropleth will be 2+ GBs making them impossible to render. Simplification techniques make highly granular choropleths possible. With simplification census tract level choropleths of the U.S. can become as small as 100 MBs.
 
