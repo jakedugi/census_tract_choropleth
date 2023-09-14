@@ -1,16 +1,8 @@
 # census_tract_choropleth
-US census track polygons
-How to Make a Census Tract Level Choropleth in Python
-This is designed to be helpful to anyone trying to create a highly granular interactive choropleth of the United States. 84,414 polygons.
+# US census track polygons, How to Make a Census Tract Level Choropleth in Python
+##This is designed to be helpful to anyone trying to create a highly granular interactive choropleth of the United States. ##84,414 polygons.
 Jake Dugan
-Jake Dugan
-
 7 min read
-·
-Just now
-
-
-
 
 Most choropleth polygons are nations, states/provinces, or counties/municipalities. However what if we want to visualize data at a more granular level such as census tracts? Census tracts are more detailed than counties, have complete coverage of the U.S. unlike zip codes, and have standard population sizes of around 4,000 people per tract. For more detailed code, explanations, discussion, reasoning, and things to avoid, as well as how I applied this to the Stroke Center Accessibility to be published. This is a straight-to-the-point technical summary. Choropleths need two basic types of inputs: polygons and data.
 
@@ -44,14 +36,15 @@ def convert_to_geojson(directory, output_path):
     else:
         return None
 
-# Directory path
+
 directory_path = 'D:/code/tract/tractzips/'
-# Specify the output file path with ".geojson" extension
+
 output_file_path = 'D:/code/tract/json/tracts1.geojson'
-# Convert to GeoJSON and save the output file
+
 output_file_path = convert_to_geojson(directory_path, output_file_path)
-# Print the output file path
+
 print("Output GeoJSON file:", output_file_path)
+'''
 
 '''
 Simplify:
