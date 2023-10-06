@@ -225,7 +225,7 @@ def catestvisual():
     with open('D:/code/tract/json/blog_tracts_zip.json', 'r') as json_file:
         json_data = json.load(json_file)
 
-    mapbox_access_token = "pk.eyJ1IjoiamFrZWR1Z2kiLCJhIjoiY2xsZndndmFtMHUzdzNycnlwN3pwdWIxMCJ9.N33rh6ImGOt8Eqov3bWUzw"
+    mapbox_access_token = "<pk.YOUR ACCESS TOKEN>"
     px.set_mapbox_access_token(mapbox_access_token)
 
     # Create the choropleth map
