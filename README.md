@@ -1,4 +1,3 @@
-# census_tract_choropleth
 # U.S. Census Tract Level Choropleth Map in Python, Highly Granular Geospatial Visualization
 A full pipeline for creating highly granular, interactive choropleth maps of U.S. Census Tracts using public data and modern geospatial visualization tools. 84,414 polygons. 
 **By [Jake Dugan](https://www.linkedin.com/in/jakedugi)**
