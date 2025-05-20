@@ -1,7 +1,9 @@
 # census_tract_choropleth
-## US census track polygons, How to Make a Census Tract Level Choropleth in Python
-This is designed to be helpful to anyone trying to create a highly granular interactive choropleth of the United States. 84,414 polygons. 
-Jake Dugan. 7 min read.
+# U.S. Census Tract Level Choropleth Map in Python, Highly Granular Geospatial Visualization
+A full pipeline for creating highly granular, interactive choropleth maps of U.S. Census Tracts using public data and modern geospatial visualization tools. 84,414 polygons. 
+**By [Jake Dugan](https://www.linkedin.com/in/jakedugi)**
+**Blog-style walkthrough on Medium**: [Read the full breakdown here](https://your-medium-blog-link.com)
+
 
 ![image](https://github.com/user-attachments/assets/900e99a4-9aec-4930-b9c6-4338fbd51232)
 

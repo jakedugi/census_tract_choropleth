@@ -1,0 +1,45 @@
+# === PYTHON ===
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+.installed.cfg
+*.manifest
+*.spec
+
+# === ENVIRONMENTS ===
+.venv/
+venv/
+env/
+ENV/
+.Python
+
+# === JUPYTER NOTEBOOKS ===
+.ipynb_checkpoints/
+
+# === SYSTEM FILES ===
+.DS_Store
+Thumbs.db
+
+# === PROJECT OUTPUTS ===
+output/
+config/accesstoken.txt
+
+# === LOGS & TEMP FILES ===
+*.log
+*.tmp
+
+# === VISUALIZATION ARTIFACTS ===
+*.html
+
+# === IDE ===
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
