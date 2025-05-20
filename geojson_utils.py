@@ -1,3 +1,7 @@
+import os
+import geopandas as gpd
+import pandas as pd
+
 def convert_to_geojson(directory, output_path):
     shp_files = [file for file in os.listdir(directory) if file.endswith('.shp')]
     if shp_files:
