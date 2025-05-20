@@ -1,0 +1,4 @@
+geopandas>=0.13.0
+pandas>=1.3.0
+plotly>=5.0.0
+jsonschema
