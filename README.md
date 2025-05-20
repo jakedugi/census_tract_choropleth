@@ -3,6 +3,8 @@
 This is designed to be helpful to anyone trying to create a highly granular interactive choropleth of the United States. 84,414 polygons. 
 Jake Dugan. 7 min read.
 
+![image](https://github.com/user-attachments/assets/900e99a4-9aec-4930-b9c6-4338fbd51232)
+
 Most choropleth polygons are nations, states/provinces, or counties/municipalities. However, what if we want to visualize data at a more granular level, such as census tracts? Census tracts are more detailed than counties, have complete coverage of the U.S., unlike zip codes, and have standard population sizes of around 4,000 people per tract. This is a straight-to-the-point technical summary. Choropleths need two basic types of inputs: polygons and data.
 
 # Polygons:
