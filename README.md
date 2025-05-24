@@ -8,7 +8,8 @@ A full pipeline for creating highly granular, interactive choropleth maps of U.S
 
 ## Sample Output
 
-![image](https://github.com/user-attachments/assets/900e99a4-9aec-4930-b9c6-4338fbd51232)
+![image](https://github.com/user-attachments/assets/cf8830da-49bf-44b2-a621-ea2a0b6d573f)
+
 
 ---
 
