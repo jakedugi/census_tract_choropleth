@@ -17,7 +17,7 @@ A full pipeline for creating highly granular, interactive choropleth maps of U.S
 Census tracts are small, relatively permanent subdivisions of counties with standard populations (~4,000 people). Unlike ZIP codes, they cover the entire U.S. and are ideal for fine-grained demographic or socioeconomic analysis.
 
 This project demonstrates how to:
-- Combine TIGER/Line shapefiles into a unified GeoJSON
+- Combine and simplify TIGER/Line shapefiles into an optimized GeoJSON
 - Clean and join ACS data at the tract level
 - Render an interactive Plotly choropleth map using Mapbox
 - Output a ready-to-share HTML visualization
@@ -32,7 +32,7 @@ _For theory, visuals, and simplification tradeoffs, [read the blog post](https:/
 
 ## Features
 
--  GeoJSON simplification for tract-level mapping
+-  Automated GeoJSON simplification with topology preservation
 -  Integrated ACS demographic data
 -  Interactive and customizable choropleth rendering with Plotly & Mapbox
 -  Modular Python structure with full pipeline orchestration
@@ -41,17 +41,17 @@ _For theory, visuals, and simplification tradeoffs, [read the blog post](https:/
 
 ##  Project Structure
 - `data/` – Raw input data
-  - `tractzips/` – Unzipped shapefiles (.shp, .dbf, etc.)
+  - `tractzips/` – Zipped TIGER/Line shapefiles
   - `ACSST5Y2021.S2701-Data.csv` – Raw Census CSV
 - `output/` – All outputs (not version-controlled)
   - `Blog_Data.csv` – Cleaned data
   - `Blog_Data_Processed.csv` – Final data for choropleth
   - `tracts1.geojson` – Combined tract-level polygons
-  - `blog_tracts_zip.json` – Simplified GeoJSON via Mapshaper
+  - `blog_tracts_zip.json` – Automatically simplified GeoJSON
   - `Blog_choropleth_map_FINAL.html` – Interactive HTML map
 - `config/` – Configuration files
   - `accesstoken.txt` – Mapbox access token (excluded in `.gitignore`)
-- `geojson_utils.py` – GeoJSON creation from shapefiles
+- `geojson_utils.py` – GeoJSON creation and simplification
 - `data_processing.py` – CSV cleaning and transformation logic
 - `visualization.py` – Plotly choropleth generation
 - `config.py` – Directory and file path config
@@ -76,7 +76,7 @@ config/accesstoken.txt
 python main.py
 ```
 This will:
-* Merge shapefiles into a GeoJSON
+* Merge and simplify shapefiles into an optimized GeoJSON
 * Clean and transform ACS data
 * Output: output/Blog_choropleth_map_FINAL.html
 
@@ -84,5 +84,6 @@ This will:
 
 ## Customization Ideas
 - Swap the ACS column (e.g., income, education, insurance rate)
-- Simplify GeoJSON using [Mapshaper.org](https://mapshaper.org/)
+- Adjust GeoJSON simplification tolerance in `main.py`
+- Optionally simplify GeoJSON using [Mapshaper.org](https://mapshaper.org/) for more fine grained control
 - Add filters for regional analysis (e.g., zoom into California)
