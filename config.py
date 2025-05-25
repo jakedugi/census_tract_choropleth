@@ -3,13 +3,13 @@ from pathlib import Path
 
 # Base directories
 DATA_DIR = Path(
-    "/private/var/folders/w7/6rbmdvg163x5kscfm1zh1t8h0000gn/T/pytest-of-jakedugan/pytest-25/test_pipeline_error_handling0/data"
+    "/private/var/folders/w7/6rbmdvg163x5kscfm1zh1t8h0000gn/T/pytest-of-jakedugan/pytest-27/test_pipeline_error_handling0/data"
 )
 OUTPUT_DIR = Path(
-    "/private/var/folders/w7/6rbmdvg163x5kscfm1zh1t8h0000gn/T/pytest-of-jakedugan/pytest-25/test_pipeline_error_handling0/output"
+    "/private/var/folders/w7/6rbmdvg163x5kscfm1zh1t8h0000gn/T/pytest-of-jakedugan/pytest-27/test_pipeline_error_handling0/output"
 )
 CONFIG_DIR = Path(
-    "/private/var/folders/w7/6rbmdvg163x5kscfm1zh1t8h0000gn/T/pytest-of-jakedugan/pytest-25/test_pipeline_error_handling0/config"
+    "/private/var/folders/w7/6rbmdvg163x5kscfm1zh1t8h0000gn/T/pytest-of-jakedugan/pytest-27/test_pipeline_error_handling0/config"
 )
 
 # Input paths
