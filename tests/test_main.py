@@ -24,7 +24,7 @@ def mock_environment(tmp_path, monkeypatch):
         raise FileNotFoundError(
             "Pre-simplified GeoJSON not found. Please ensure data/blog_tracts_zip.json exists."
         )
-    
+
     dst_geojson = output_dir / "blog_tracts_zip.json"
     shutil.copy(src_geojson, dst_geojson)
 
@@ -48,7 +48,7 @@ def mock_environment(tmp_path, monkeypatch):
         "output_dir": str(output_dir),
         "acs_file": str(acs_file),
         "token_file": str(token_file),
-        "simplified_json": str(dst_geojson)
+        "simplified_json": str(dst_geojson),
     }
     config_file = config_dir / "test_config.json"
     with open(config_file, "w") as f:
@@ -64,7 +64,7 @@ def mock_environment(tmp_path, monkeypatch):
         "acs_file": acs_file,
         "token_file": token_file,
         "config_file": config_file,
-        "simplified_json": dst_geojson
+        "simplified_json": dst_geojson,
     }
 
 
@@ -76,14 +76,21 @@ def cleanup():
     with open("config.py", "w") as f:
         f.write(
             """import os
+from pathlib import Path
 
-TRACT_ZIP_DIR = "/private/var/folders/w7/6rbmdvg163x5kscfm1zh1t8h0000gn/T/pytest-of-jakedugan/pytest-15/test_pipeline_error_handling0/data/tractzips"
-RAW_CSV_PATH = "/private/var/folders/w7/6rbmdvg163x5kscfm1zh1t8h0000gn/T/pytest-of-jakedugan/pytest-15/test_pipeline_error_handling0/data/ACSST5Y2021.S2701-Data.csv"
-PROCESSED_CSV_PATH = "/private/var/folders/w7/6rbmdvg163x5kscfm1zh1t8h0000gn/T/pytest-of-jakedugan/pytest-15/test_pipeline_error_handling0/output/Blog_Data.csv"
-GEOJSON_OUTPUT_PATH = "/private/var/folders/w7/6rbmdvg163x5kscfm1zh1t8h0000gn/T/pytest-of-jakedugan/pytest-15/test_pipeline_error_handling0/output/tracts1.geojson"
-SIMPLIFIED_JSON_PATH = "/private/var/folders/w7/6rbmdvg163x5kscfm1zh1t8h0000gn/T/pytest-of-jakedugan/pytest-15/test_pipeline_error_handling0/output/blog_tracts_zip.json"
-ACCESS_TOKEN_PATH = "/private/var/folders/w7/6rbmdvg163x5kscfm1zh1t8h0000gn/T/pytest-of-jakedugan/pytest-15/test_pipeline_error_handling0/config/accesstoken.txt"
-CHOROPLETH_HTML_PATH = "/private/var/folders/w7/6rbmdvg163x5kscfm1zh1t8h0000gn/T/pytest-of-jakedugan/pytest-15/test_pipeline_error_handling0/output/Blog_choropleth_map_FINAL.html"
+# Base directories
+DATA_DIR = Path("data")
+OUTPUT_DIR = Path("output")
+CONFIG_DIR = Path("config")
+
+# Input paths
+RAW_CSV_PATH = str(DATA_DIR / "ACSST5Y2021.S2701-Data.csv")
+ACCESS_TOKEN_PATH = str(CONFIG_DIR / "accesstoken.txt")
+
+# Output paths
+PROCESSED_CSV_PATH = str(OUTPUT_DIR / "Blog_Data.csv")
+SIMPLIFIED_JSON_PATH = str(OUTPUT_DIR / "blog_tracts_zip.json")
+CHOROPLETH_HTML_PATH = str(OUTPUT_DIR / "Blog_choropleth_map_FINAL.html")
 """
         )
 
@@ -95,10 +102,7 @@ def test_main_success(mock_environment):
 
         # Verify output files were created
         output_dir = mock_environment["output_dir"]
-        expected_files = [
-            "Blog_Data.csv",
-            "Blog_choropleth_map_FINAL.html"
-        ]
+        expected_files = ["Blog_Data.csv", "Blog_choropleth_map_FINAL.html"]
 
         for file in expected_files:
             assert os.path.exists(output_dir / file)

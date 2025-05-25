@@ -1,11 +1,16 @@
-
 import os
 from pathlib import Path
 
 # Base directories
-DATA_DIR = Path("/private/var/folders/w7/6rbmdvg163x5kscfm1zh1t8h0000gn/T/pytest-of-jakedugan/pytest-25/test_pipeline_error_handling0/data")
-OUTPUT_DIR = Path("/private/var/folders/w7/6rbmdvg163x5kscfm1zh1t8h0000gn/T/pytest-of-jakedugan/pytest-25/test_pipeline_error_handling0/output")
-CONFIG_DIR = Path("/private/var/folders/w7/6rbmdvg163x5kscfm1zh1t8h0000gn/T/pytest-of-jakedugan/pytest-25/test_pipeline_error_handling0/config")
+DATA_DIR = Path(
+    "/private/var/folders/w7/6rbmdvg163x5kscfm1zh1t8h0000gn/T/pytest-of-jakedugan/pytest-25/test_pipeline_error_handling0/data"
+)
+OUTPUT_DIR = Path(
+    "/private/var/folders/w7/6rbmdvg163x5kscfm1zh1t8h0000gn/T/pytest-of-jakedugan/pytest-25/test_pipeline_error_handling0/output"
+)
+CONFIG_DIR = Path(
+    "/private/var/folders/w7/6rbmdvg163x5kscfm1zh1t8h0000gn/T/pytest-of-jakedugan/pytest-25/test_pipeline_error_handling0/config"
+)
 
 # Input paths
 RAW_CSV_PATH = str(DATA_DIR / "ACSST5Y2021.S2701-Data.csv")
