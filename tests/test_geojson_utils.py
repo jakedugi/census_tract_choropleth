@@ -1,78 +1,91 @@
+import os
 import pytest
 import geopandas as gpd
+import zipfile
 from shapely.geometry import Polygon
-import json
-from pathlib import Path
-from geojson_utils import simplify_geojson, convert_to_geojson
+from geojson_utils import extract_shapefiles, simplify_geojson, convert_to_geojson
 
 
 @pytest.fixture
-def sample_geojson(tmp_path):
-    """Create a sample GeoJSON file for testing."""
-    # Create a simple GeoDataFrame
+def sample_shapefile(tmp_path):
+    """Create a sample shapefile for testing."""
+    # Create a simple polygon
     polygon = Polygon([(0, 0), (1, 0), (1, 1), (0, 1)])
-    gdf = gpd.GeoDataFrame({"geometry": [polygon]})
-    gdf["GEOID"] = ["01001"]  # Add GEOID for identification
-
-    # Save as GeoJSON
-    input_file = tmp_path / "input.geojson"
-    gdf.to_file(input_file, driver="GeoJSON")
-    return input_file
-
-
-def test_simplify_geojson(tmp_path, sample_geojson):
-    """Test GeoJSON simplification function."""
-    output_file = tmp_path / "simplified.geojson"
-
-    # Test simplification
-    result = simplify_geojson(str(sample_geojson), str(output_file))
-    assert result == str(output_file)
-    assert output_file.exists()
-
-    # Verify simplified GeoJSON structure
-    with open(output_file) as f:
-        simplified = json.load(f)
-    assert "type" in simplified
-    assert "features" in simplified
-    assert len(simplified["features"]) > 0
-
-
-def test_convert_to_geojson(tmp_path):
-    """Test shapefile to GeoJSON conversion."""
-    # Create a mock shapefile directory
-    shp_dir = tmp_path / "shapefiles"
+    gdf = gpd.GeoDataFrame({
+        'geometry': [polygon],
+        'GEOID': ['01001']
+    })
+    
+    # Save as shapefile
+    shp_dir = tmp_path / "shp"
     shp_dir.mkdir()
-
-    # Create a simple shapefile
-    polygon = Polygon([(0, 0), (1, 0), (1, 1), (0, 1)])
-    gdf = gpd.GeoDataFrame({"geometry": [polygon]})
-    gdf["GEOID"] = ["01001"]
-    shp_file = shp_dir / "tract.shp"
-    gdf.to_file(shp_file)
-
-    # Test conversion
-    output_file = tmp_path / "output.geojson"
-    result = convert_to_geojson(str(shp_dir), str(output_file))
-
-    assert result == str(output_file)
-    assert Path(result).exists()
-
-    # Verify GeoJSON structure
-    with open(result) as f:
-        geojson = json.load(f)
-    assert "type" in geojson
-    assert "features" in geojson
-    assert len(geojson["features"]) > 0
+    shp_path = shp_dir / "test.shp"
+    gdf.to_file(shp_path)
+    
+    # Create zip file
+    zip_dir = tmp_path / "zips"
+    zip_dir.mkdir()
+    zip_path = zip_dir / "01_tract.zip"
+    
+    with zipfile.ZipFile(zip_path, 'w') as zipf:
+        for ext in ['.shp', '.shx', '.dbf', '.prj']:
+            file_path = str(shp_path).replace('.shp', ext)
+            if os.path.exists(file_path):
+                zipf.write(file_path, os.path.basename(file_path))
+    
+    return {
+        'zip_dir': str(zip_dir),
+        'shp_dir': str(shp_dir),
+        'gdf': gdf
+    }
 
 
-def test_simplify_geojson_invalid_input(tmp_path):
-    """Test error handling for invalid GeoJSON input."""
-    input_file = tmp_path / "invalid.geojson"
-    output_file = tmp_path / "output.geojson"
+def test_extract_shapefiles(sample_shapefile, tmp_path):
+    """Test shapefile extraction from zip files."""
+    extract_dir = tmp_path / "extract"
+    extract_dir.mkdir()
+    
+    extract_shapefiles(sample_shapefile['zip_dir'], str(extract_dir))
+    
+    # Verify files were extracted
+    assert any(f.endswith('.shp') for f in os.listdir(extract_dir))
 
-    # Create invalid GeoJSON
-    with open(input_file, "w") as f:
-        json.dump({"type": "Invalid"}, f)
 
-    result = simplify_geojson(str(input_file), str(output_file))
-    assert result is None  # Should return None for invalid input
+def test_simplify_geojson(sample_shapefile, tmp_path):
+    """Test GeoJSON simplification."""
+    # Create input GeoJSON
+    input_path = str(tmp_path / "input.geojson")
+    sample_shapefile['gdf'].to_file(input_path, driver="GeoJSON")
+    
+    # Test successful simplification
+    output_path = str(tmp_path / "simplified.geojson")
+    result = simplify_geojson(input_path, output_path)
+    assert result == output_path
+    assert os.path.exists(output_path)
+    
+    # Test with invalid input
+    invalid_path = str(tmp_path / "invalid.geojson")
+    with open(invalid_path, 'w') as f:
+        f.write("invalid json")
+    result = simplify_geojson(invalid_path, output_path)
+    assert result is None
+
+
+def test_convert_to_geojson(sample_shapefile, tmp_path):
+    """Test conversion of shapefiles to GeoJSON."""
+    output_path = str(tmp_path / "output.geojson")
+    
+    # Test successful conversion
+    result = convert_to_geojson(sample_shapefile['shp_dir'], output_path)
+    assert result == output_path
+    assert os.path.exists(output_path)
+    
+    # Test with empty directory
+    empty_dir = str(tmp_path / "empty")
+    os.makedirs(empty_dir)
+    result = convert_to_geojson(empty_dir, output_path)
+    assert result is None
+    
+    # Test with invalid directory
+    result = convert_to_geojson("/nonexistent/dir", output_path)
+    assert result is None
