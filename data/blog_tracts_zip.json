@@ -1,0 +1,27 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "GEOID": "01001",
+        "NAME": "Census Tract 1, Example County, Example State",
+        "total_population": 1000,
+        "uninsured_population": 100,
+        "uninsured_rate": 10.0
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-86.0, 32.0],
+            [-86.0, 32.1],
+            [-85.9, 32.1],
+            [-85.9, 32.0],
+            [-86.0, 32.0]
+          ]
+        ]
+      }
+    }
+  ]
+} 

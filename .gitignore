@@ -31,9 +31,9 @@ Thumbs.db
 output/
 config/accesstoken.txt
 
-# === DATA & OUTPUT DIRECTORIES ===
-data/
-output/
+# === DATA FILES ===
+data/*
+!data/blog_tracts_zip.json
 
 # === LOGS & TEMP FILES ===
 *.log
@@ -46,4 +46,4 @@ output/
 .vscode/
 .idea/
 *.sublime-project
-*.sublime-workspacedata/
+*.sublime-workspace
