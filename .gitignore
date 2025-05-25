@@ -46,4 +46,4 @@ output/
 .vscode/
 .idea/
 *.sublime-project
-*.sublime-workspace
+*.sublime-workspacedata/
