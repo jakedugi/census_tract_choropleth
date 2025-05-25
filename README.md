@@ -1,6 +1,7 @@
 # U.S. Census Tract Level Choropleth Map in Python: Highly Granular Geospatial Visualization
 
 [![CI](https://github.com/jakedugi/census_tract_visualizer/actions/workflows/ci.yml/badge.svg)](https://github.com/jakedugi/census_tract_visualizer/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/jakedugi/census_tract_visualizer/branch/main/graph/badge.svg)](https://codecov.io/gh/jakedugi/census_tract_visualizer)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue)](https://www.python.org/downloads/)
 
