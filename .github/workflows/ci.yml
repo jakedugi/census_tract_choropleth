@@ -38,6 +38,39 @@ jobs:
         files: ./coverage.xml
         fail_ci_if_error: true
 
+    - name: Prepare sample data for smoke test
+      run: |
+        # Create necessary directories
+        mkdir -p data/tractzips output config
+        
+        # Create sample ACS data
+        cat > data/ACSST5Y2021.S2701-Data.csv << 'EOL'
+        GEO_ID,S2701_C01_001E
+        1400000US01001,1000
+        1400000US01002,2000
+        EOL
+        
+        # Create sample shapefile data
+        cat > output/tracts1.geojson << 'EOL'
+        {"type":"FeatureCollection","features":[{"type":"Feature","properties":{"GEOID":"01001"},"geometry":{"type":"Polygon","coordinates":[[[-86.5,32.5],[-86.4,32.5],[-86.4,32.4],[-86.5,32.4],[-86.5,32.5]]]}}]}
+        EOL
+        
+        # Create sample access token
+        echo 'pk.test_token' > config/accesstoken.txt
+        
+        # Update config.py with CI paths
+        cat > config.py << 'EOL'
+        import os
+
+        TRACT_ZIP_DIR = "data/tractzips"
+        RAW_CSV_PATH = "data/ACSST5Y2021.S2701-Data.csv"
+        PROCESSED_CSV_PATH = "output/Blog_Data.csv"
+        GEOJSON_OUTPUT_PATH = "output/tracts1.geojson"
+        SIMPLIFIED_JSON_PATH = "output/blog_tracts_zip.json"
+        ACCESS_TOKEN_PATH = "config/accesstoken.txt"
+        CHOROPLETH_HTML_PATH = "output/Blog_choropleth_map_FINAL.html"
+        EOL
+
     - name: Smoke test
       run: |
         python main.py 
