@@ -1,4 +1,3 @@
-
 import os
 
 TRACT_ZIP_DIR = "/private/var/folders/w7/6rbmdvg163x5kscfm1zh1t8h0000gn/T/pytest-of-jakedugan/pytest-15/test_pipeline_error_handling0/data/tractzips"

@@ -1,1 +1,1 @@
-"""Test suite for the Census Tract Visualizer.""" 
+"""Test suite for the Census Tract Visualizer."""
