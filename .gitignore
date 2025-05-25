@@ -31,6 +31,10 @@ Thumbs.db
 output/
 config/accesstoken.txt
 
+# === DATA & OUTPUT DIRECTORIES ===
+data/
+output/
+
 # === LOGS & TEMP FILES ===
 *.log
 *.tmp
