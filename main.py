@@ -1,4 +1,7 @@
+import os
 import sys
+import json
+from pathlib import Path
 import pandas as pd
 from config import (
     TRACT_ZIP_DIR,
@@ -22,6 +25,29 @@ from visualization import generate_choropleth
 
 
 def main():
+    # Override paths with test configuration if provided
+    config_path = os.getenv("CENSUS_CONFIG")
+    if config_path:
+        try:
+            with open(config_path) as cf:
+                cfg = json.load(cf)
+            # Update paths from config
+            global TRACT_ZIP_DIR, RAW_CSV_PATH, PROCESSED_CSV_PATH
+            global GEOJSON_OUTPUT_PATH, SIMPLIFIED_JSON_PATH
+            global ACCESS_TOKEN_PATH, CHOROPLETH_HTML_PATH
+
+            output_dir = Path(cfg.get("output_dir"))
+            TRACT_ZIP_DIR = str(cfg.get("tractzips_dir", TRACT_ZIP_DIR))
+            RAW_CSV_PATH = str(cfg.get("acs_file", RAW_CSV_PATH))
+            PROCESSED_CSV_PATH = str(output_dir / "Blog_Data.csv")
+            GEOJSON_OUTPUT_PATH = str(output_dir / "tracts1.geojson")
+            SIMPLIFIED_JSON_PATH = str(output_dir / "blog_tracts_zip.json")
+            ACCESS_TOKEN_PATH = str(cfg.get("token_file", ACCESS_TOKEN_PATH))
+            CHOROPLETH_HTML_PATH = str(output_dir / "Blog_choropleth_map_FINAL.html")
+        except Exception as e:
+            print(f"Error loading config file: {e}")
+            sys.exit(1)
+
     # Process ACS data with explicit column mapping
     column_mapping = {
         "S2701_C01_001E": "Total_Population"  # Map ACS column code to readable name

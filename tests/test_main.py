@@ -1,5 +1,6 @@
 import pytest
 import os
+import json
 import pandas as pd
 import geopandas as gpd
 from shapely.geometry import Polygon
@@ -40,20 +41,19 @@ def mock_environment(tmp_path, monkeypatch):
     token_file = config_dir / "accesstoken.txt"
     token_file.write_text("mock_token")
 
-    # Update config.py with test paths
-    config_content = f"""
-import os
+    # Create test configuration
+    config = {
+        "tractzips_dir": str(tractzips_dir),
+        "acs_file": str(acs_file),
+        "output_dir": str(output_dir),
+        "token_file": str(token_file),
+    }
+    config_file = config_dir / "test_config.json"
+    with open(config_file, "w") as f:
+        json.dump(config, f)
 
-TRACT_ZIP_DIR = "{str(tractzips_dir)}"
-RAW_CSV_PATH = "{str(acs_file)}"
-PROCESSED_CSV_PATH = "{str(output_dir / 'Blog_Data.csv')}"
-GEOJSON_OUTPUT_PATH = "{str(output_dir / 'tracts1.geojson')}"
-SIMPLIFIED_JSON_PATH = "{str(output_dir / 'blog_tracts_zip.json')}"
-ACCESS_TOKEN_PATH = "{str(token_file)}"
-CHOROPLETH_HTML_PATH = "{str(output_dir / 'Blog_choropleth_map_FINAL.html')}"
-"""
-    with open("config.py", "w") as f:
-        f.write(config_content)
+    # Set environment variable for test configuration
+    monkeypatch.setenv("CENSUS_CONFIG", str(config_file))
 
     return {
         "data_dir": data_dir,
@@ -62,6 +62,7 @@ CHOROPLETH_HTML_PATH = "{str(output_dir / 'Blog_choropleth_map_FINAL.html')}"
         "tractzips_dir": tractzips_dir,
         "acs_file": acs_file,
         "token_file": token_file,
+        "config_file": config_file,
     }
 
 
