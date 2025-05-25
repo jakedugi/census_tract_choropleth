@@ -3,9 +3,8 @@ import os
 import pytest
 import json
 import pandas as pd
-import geopandas as gpd
+import shutil
 from pathlib import Path
-from shapely.geometry import Polygon
 
 
 @pytest.fixture
@@ -19,16 +18,14 @@ def mock_environment(tmp_path):
     output_dir = tmp_path / "output"
     output_dir.mkdir()
 
-    # Create mock shapefile
-    tract_zip_dir = data_dir / "tractzips"
-    tract_zip_dir.mkdir()
-
-    # Create a simple shapefile
-    polygon = Polygon([(0, 0), (1, 0), (1, 1), (0, 1)])
-    gdf = gpd.GeoDataFrame({"geometry": [polygon]})
-    gdf["GEOID"] = ["01001"]
-    shp_file = tract_zip_dir / "tract.shp"
-    gdf.to_file(shp_file)
+    # Copy pre-simplified GeoJSON
+    src_geojson = Path("data/blog_tracts_zip.json")
+    if not src_geojson.exists():
+        raise FileNotFoundError(
+            "Pre-simplified GeoJSON not found. Please ensure data/blog_tracts_zip.json exists."
+        )
+    dst_geojson = output_dir / "blog_tracts_zip.json"
+    shutil.copy(src_geojson, dst_geojson)
 
     # Create mock ACS data
     acs_data = pd.DataFrame(
@@ -47,14 +44,21 @@ def mock_environment(tmp_path):
     # Create mock config.py
     config_content = f"""
 import os
+from pathlib import Path
 
-TRACT_ZIP_DIR = "{tract_zip_dir}"
-RAW_CSV_PATH = "{acs_file}"
-PROCESSED_CSV_PATH = "{output_dir}/Blog_Data.csv"
-GEOJSON_OUTPUT_PATH = "{output_dir}/tracts1.geojson"
-SIMPLIFIED_JSON_PATH = "{output_dir}/blog_tracts_zip.json"
-ACCESS_TOKEN_PATH = "{token_file}"
-CHOROPLETH_HTML_PATH = "{output_dir}/Blog_choropleth_map_FINAL.html"
+# Base directories
+DATA_DIR = Path("{data_dir}")
+OUTPUT_DIR = Path("{output_dir}")
+CONFIG_DIR = Path("{config_dir}")
+
+# Input paths
+RAW_CSV_PATH = str(DATA_DIR / "ACSST5Y2021.S2701-Data.csv")
+ACCESS_TOKEN_PATH = str(CONFIG_DIR / "accesstoken.txt")
+
+# Output paths
+PROCESSED_CSV_PATH = str(OUTPUT_DIR / "Blog_Data.csv")
+SIMPLIFIED_JSON_PATH = str(OUTPUT_DIR / "blog_tracts_zip.json")
+CHOROPLETH_HTML_PATH = str(OUTPUT_DIR / "Blog_choropleth_map_FINAL.html")
 """
     config_file = Path("config.py")
     config_file.write_text(config_content)
@@ -83,8 +87,6 @@ def test_pipeline_runs(mock_environment):
         output_dir = mock_environment / "output"
         expected_files = [
             "Blog_Data.csv",
-            "tracts1.geojson",
-            "blog_tracts_zip.json",
             "Blog_choropleth_map_FINAL.html",
         ]
 
