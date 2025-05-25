@@ -1,10 +1,11 @@
+import sys
 import pandas as pd
 from config import (
     TRACT_ZIP_DIR, RAW_CSV_PATH, PROCESSED_CSV_PATH,
     GEOJSON_OUTPUT_PATH, SIMPLIFIED_JSON_PATH, ACCESS_TOKEN_PATH, CHOROPLETH_HTML_PATH
 )
-from geojson_utils import convert_to_geojson, simplify_geojson
 from data_processing import process_acs_csv, print_population_stats
+from geojson_utils import convert_to_geojson, simplify_geojson
 from visualization import generate_choropleth
 
 # ACS Column Documentation:
@@ -14,34 +15,40 @@ from visualization import generate_choropleth
 # - 001: Row number (total population)
 # - E: Estimate (vs M for margin of error)
 
-if __name__ == '__main__':
-    # Convert shapefiles to GeoJSON
-    geojson_path = convert_to_geojson(TRACT_ZIP_DIR, GEOJSON_OUTPUT_PATH)
-    if not geojson_path:
-        print("Failed to create GeoJSON file")
-        exit(1)
-    
-    # Simplify GeoJSON for visualization
-    simplified_path = simplify_geojson(GEOJSON_OUTPUT_PATH, SIMPLIFIED_JSON_PATH)
-    if not simplified_path:
-        print("Failed to simplify GeoJSON file")
-        exit(1)
-    
-    print("GeoJSON processing complete")
-
+def main():
     # Process ACS data with explicit column mapping
     column_mapping = {
         'S2701_C01_001E': 'Total_Population'  # Map ACS column code to readable name
     }
     
-    dtypes, missing = process_acs_csv(RAW_CSV_PATH, PROCESSED_CSV_PATH, column_mapping)
-    print("Data Types:\n", dtypes)
-    print("\nMissing Values:\n", missing)
+    try:
+        dtypes, missing = process_acs_csv(RAW_CSV_PATH, PROCESSED_CSV_PATH, column_mapping)
+        print("Data Types:\n", dtypes)
+        print("\nMissing Values:\n", missing)
+    except Exception as e:
+        print(f"Error processing ACS data: {e}")
+        sys.exit(1)
 
-    # Generate statistics
-    df = pd.read_csv(PROCESSED_CSV_PATH)
-    print_population_stats(df, 'Total_Population')
+    # Convert shapefiles → GeoJSON
+    geojson = convert_to_geojson(TRACT_ZIP_DIR, GEOJSON_OUTPUT_PATH)
+    if not geojson:
+        # print already done inside convert_to_geojson
+        sys.exit(1)
 
-    # Create visualization using simplified GeoJSON
-    generate_choropleth(PROCESSED_CSV_PATH, SIMPLIFIED_JSON_PATH, ACCESS_TOKEN_PATH, CHOROPLETH_HTML_PATH)
-    print("Choropleth map saved to:", CHOROPLETH_HTML_PATH)
+    # Simplify GeoJSON for visualization
+    simplified = simplify_geojson(GEOJSON_OUTPUT_PATH, SIMPLIFIED_JSON_PATH)
+    if not simplified:
+        print("Failed to simplify GeoJSON")
+        sys.exit(1)
+
+    # Create visualization
+    try:
+        generate_choropleth(PROCESSED_CSV_PATH, SIMPLIFIED_JSON_PATH, 
+                          ACCESS_TOKEN_PATH, CHOROPLETH_HTML_PATH)
+        print("Choropleth map saved to:", CHOROPLETH_HTML_PATH)
+    except Exception as e:
+        print(f"Error generating choropleth: {e}")
+        sys.exit(1)
+
+if __name__ == '__main__':
+    main()
